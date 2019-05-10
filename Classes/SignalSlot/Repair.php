@@ -135,7 +135,13 @@ class Repair
      */
     protected function isRecordConfiguredToUseDefaultLanguage(array $sysFileRecord, array $foreignRecord)
     {
+        $isNotTranslatable =
+            !isset($GLOBALS['TCA'][$sysFileRecord['tablenames']]['columns'][$sysFileRecord['fieldname']]['config']['behaviour']['allowLanguageSynchronization'])
+            || (isset($GLOBALS['TCA'][$sysFileRecord['tablenames']]['columns'][$sysFileRecord['fieldname']]['config']['behaviour']['allowLanguageSynchronization'])
+                && $GLOBALS['TCA'][$sysFileRecord['tablenames']]['columns'][$sysFileRecord['fieldname']]['config']['behaviour']['allowLanguageSynchronization']);
+
         return VersionNumberUtility::convertVersionNumberToInteger(TYPO3_branch) >= 8006000
+            && $isNotTranslatable
             && array_key_exists('l10n_state', $foreignRecord)
             && $this->configuredToUseDefaultLanguage($foreignRecord['l10n_state'], $sysFileRecord['fieldname']);
     }
